@@ -7,7 +7,7 @@ from app.visualization import visualize
 def main():
     config = load_config_from_json('input.json')
     cameras_dict = {c.name: c for c in config.cameras}
-    start_cam = cameras_dict.get('default')
+    start_cam = cameras_dict.get('START')
     all_frames = [Frame(
         Position=start_cam.position,
         Rotation=start_cam.rotation,
@@ -29,6 +29,7 @@ def main():
 
 
 if __name__ == "__main__":
-    # YABSCMSG
+    # YABSC2MSG
+    # Yet Another Beat Saber Camera2 Movement Script Generator
     frame_list = main()
     visualize(frame_list)

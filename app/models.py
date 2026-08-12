@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Annotated, Union, Literal
+from typing import Optional, Annotated, Union, Literal, TypeAlias
 
 from pydantic import BaseModel, Field
 
@@ -45,37 +45,42 @@ class Camera(BaseModel):
     rotation: Point
 
 
-class Transition(BaseModel):
-    target: str
-    duration: float
-    hold: float
+class BaseInterpolation(BaseModel):
     smooth: SmoothType = SmoothType.LINEAR
-    keyframe_interval: float = 1.0
 
 
-class ArcTransition(Transition):
+class Arc(BaseInterpolation):
     type: Literal["arc"]
     center: Point
 
 
-class LinearTransition(Transition):
+class Linear(BaseInterpolation):
     type: Literal["linear"]
 
 
-class CubicBezier(Transition):
+class CubicBezier(BaseInterpolation):
     type: Literal["cubic_bezier"]
     handle_start: Point
     handle_end: Point
 
 
-TransitionType = Annotated[
-    Union[ArcTransition, LinearTransition, CubicBezier],
-    Field(discriminator="type")
+Interpolation: TypeAlias = Annotated[
+    Union[Arc, Linear, CubicBezier],
+    Field(discriminator='type')
 ]
+
+
+class Transition(BaseModel):
+    target: str
+    duration: float
+    hold: float
+    keyframe_interval: float = 1.0
+    position_interpolation: Interpolation
+    rotation_interpolation: Interpolation
 
 
 class MovementConfig(BaseModel):
     sync_to_song: bool
     loop: bool
     cameras: list[Camera]
-    transitions: list[TransitionType]
+    transitions: list[Transition]

@@ -1,14 +1,14 @@
-from app.models import LinearTransition, Point
-from app.transitions.common import PointGeneratorFactory, BasePointGenerator
+from app.models import Linear, Point
+from app.transitions.base import PointGeneratorFactory, BasePointGenerator
 
 
-@PointGeneratorFactory.register(LinearTransition)
-class LinearPointGenerator(BasePointGenerator[LinearTransition]):
+@PointGeneratorFactory.register(Linear)
+class LinearPointGenerator(BasePointGenerator[Linear]):
 
-    def __init__(self, start: Point, end: Point, transition: LinearTransition = None):
-        super().__init__(start, end, transition)
+    def __init__(self, start: Point, end: Point, interpolation: Linear):
+        super().__init__(start, end, interpolation)
 
-    def generate(self, t: float) -> Point:
+    def _generate_point(self, t: float) -> Point:
         x = self._start.x + t * (self._end.x - self._start.x)
         y = self._start.y + t * (self._end.y - self._start.y)
         z = self._start.z + t * (self._end.z - self._start.z)

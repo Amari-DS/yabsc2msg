@@ -1,6 +1,5 @@
 from app.models import Camera, Transition, Frame
-from app.transitions.common import PointGeneratorFactory
-from app.transitions.linear import LinearPointGenerator
+from app.transitions.base import PointGeneratorFactory
 
 
 class FrameBuilder:
@@ -15,16 +14,15 @@ class FrameBuilder:
         frame_duration = round(self.__transition.duration / frame_count, 5)
         position_generator = PointGeneratorFactory.create(start=self.__start_cam.position,
                                                           end=self.__end_cam.position,
-                                                          transition=self.__transition)
-        rotation_generator = LinearPointGenerator(start=self.__start_cam.rotation,
-                                                  end=self.__end_cam.rotation)
-        easing_func = self.__transition.smooth
+                                                          interpolation=self.__transition.position_interpolation)
+        rotation_generator = PointGeneratorFactory.create(start=self.__start_cam.rotation,
+                                                          end=self.__end_cam.rotation,
+                                                          interpolation=self.__transition.rotation_interpolation)
         frames = []
         for i in range(1, frame_count + 1):
             t_linear = i / frame_count
-            t = easing_func(t_linear)
-            position = position_generator.generate(t)
-            rotation = rotation_generator.generate(t)
+            position = position_generator.generate(t_linear)
+            rotation = rotation_generator.generate(t_linear)
             frame = Frame(
                 Position=position,
                 Rotation=rotation,

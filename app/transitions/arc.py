@@ -1,18 +1,18 @@
 import math
 
-from app.models import ArcTransition, Point
-from app.transitions.common import PointGeneratorFactory, BasePointGenerator
+from app.models import Arc, Point
+from app.transitions.base import PointGeneratorFactory, BasePointGenerator
 
 
-@PointGeneratorFactory.register(ArcTransition)
-class ArcPointGenerator(BasePointGenerator[ArcTransition]):
+@PointGeneratorFactory.register(Arc)
+class ArcPointGenerator(BasePointGenerator[Arc]):
 
-    def __init__(self, start: Point, end: Point, transition: ArcTransition):
-        super().__init__(start, end, transition)
+    def __init__(self, start: Point, end: Point, interpolation: Arc):
+        super().__init__(start, end, interpolation)
         self.__set_up()
 
     def __set_up(self):
-        center_point = self._transition.center
+        center_point = self._interpolation.center
         self.__cx, self.__cy, self.__cz = center_point.x, center_point.y, center_point.z
 
         # Gemini: 1. Векторы относительно 3D центра
@@ -35,7 +35,7 @@ class ArcPointGenerator(BasePointGenerator[ArcTransition]):
         self.__u0 = [v0[0] / self.__r0, v0[1] / self.__r0, v0[2] / self.__r0] if self.__r0 > 0 else [0, 0, 0]
         self.__u1 = [v1[0] / self.__r1, v1[1] / self.__r1, v1[2] / self.__r1] if self.__r1 > 0 else [0, 0, 0]
 
-    def generate(self, t: float) -> Point:
+    def _generate_point(self, t: float) -> Point:
         # Gemini: Интерполяция 3D радиуса
         r_t = self.__r0 + t * (self.__r1 - self.__r0)
 

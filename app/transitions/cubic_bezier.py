@@ -1,13 +1,13 @@
 from app.models import CubicBezier, Point
-from app.transitions.common import PointGeneratorFactory, BasePointGenerator
+from app.transitions.base import PointGeneratorFactory, BasePointGenerator
 
 
 @PointGeneratorFactory.register(CubicBezier)
 class CubicBezierPointGenerator(BasePointGenerator[CubicBezier]):
 
-    def __init__(self, start: Point, end: Point, transition: CubicBezier):
-        super().__init__(start, end, transition)
-        self.__set_up(start, end, transition)
+    def __init__(self, start: Point, end: Point, interpolation: CubicBezier):
+        super().__init__(start, end, interpolation)
+        self.__set_up(start, end, interpolation)
 
     def __set_up(self, start: Point, end: Point, transition: CubicBezier):
         self.p0 = start
@@ -23,7 +23,7 @@ class CubicBezierPointGenerator(BasePointGenerator[CubicBezier]):
         )
         self.p3 = end
 
-    def generate(self, t: float) -> Point:
+    def _generate_point(self, t: float) -> Point:
         u = 1.0 - t
         uu = u * u
         uuu = uu * u
