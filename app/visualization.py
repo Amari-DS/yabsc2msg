@@ -1,9 +1,11 @@
+from typing import Iterable
+
 from matplotlib import pyplot as plt
 
-from app.models import Frame
+from app.models import Frame, Camera
 
 
-def visualize(frame_list: list[Frame]):
+def visualize(frame_list: list[Frame], cameras: Iterable[Camera]):
     fig = plt.figure(figsize=(30, 30, 'cm'))
     ax = fig.add_subplot(111, projection='3d')
 
@@ -18,6 +20,7 @@ def visualize(frame_list: list[Frame]):
     # Точки
     ax.scatter(xs[0], ys[0], zs[0], color='green', s=100)
     ax.scatter(xs[-1], ys[-1], zs[-1], color='red', s=100)
+    ax.scatter([c.position.x for c in cameras], [c.position.y for c in cameras], [c.position.z for c in cameras], color='orange', s=110)
 
     ax.scatter([0.0, 0.0], [0.0, 2.0], [0.0, 0.0], color='#FFA500', s=120)
     ax.plot([0.0, 0.0], [0.0, 2.0], [0.0, 0.0], '#FFA500')

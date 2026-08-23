@@ -43,6 +43,7 @@ class Camera(BaseModel):
     name: str
     position: Point
     rotation: Point
+    is_start: bool = Frame
 
 
 class BaseInterpolation(BaseModel):
